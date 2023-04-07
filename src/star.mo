@@ -8,7 +8,7 @@ module {
   /// `Star<Ok, Err>` is the type used for returning and propagating async* behavior and errors. It
   /// is a type with the variants, `#trappable(Ok)`, representing success and containing
   /// a value produced without an awaited call, `#commited(Ok)`, representing success and containing
-  /// a value produced with an awaited call,and `#err(Err)`, representing error and containing an error value.
+  /// a value produced with an awaited call,and `#err(#trappable(Err))` and `#err(#awaited(Err))`, representing error and containing an error value.
   ///
   /// The simplest way of working with `Star`s is to pattern match on them:
   ///
@@ -18,7 +18,8 @@ module {
   /// switch(createUser(myUser)) {
   ///   case (#awaited(id)) { Debug.print("Created new user with id and state commited: " # id) };
   ///   case (#trappable(id)) { Debug.print("Created new user with id and state has not been commited: " # id) };
-  ///   case (#err(msg)) { Debug.print("Failed to create user with the error: " # msg) };
+  ///   case (#err(#trappable(msg))) { Debug.print("Failed to create user with the error: " # msg) };
+  ///   case (#err(#awaited(msg))) { Debug.print("Failed to create user while commiting state with the error: " # msg) };
   /// }
   /// ```
   public type Star<Ok, Err> = {
